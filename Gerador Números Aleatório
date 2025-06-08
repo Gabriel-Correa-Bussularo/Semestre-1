@@ -1,25 +1,25 @@
 #include <stdio.h>   
-#include <stdlib.h>  // biblioteca para usar o rand e srand
+#include <stdlib.h>  // biblioteca para usar o rand, srand, malloc, free
 #include <time.h>    // biblioteca para usar o time
 
 #define N 1000  //constante de 1000 posições
 
 // gera números aleatórios até 9999
-void numeros_aleatorios(int vetor[]) {
+void numeros_aleatorios(int *vetor) {
     for (int i = 0; i < N; i++) {
         vetor[i] = rand() % 10000;
     }
 }
 
 // Função que copia um vetor para outro
-void copiarVetor(int destino[], int origem[]) {
+void copiarVetor(int *destino, int *origem) {
     for (int i = 0; i < N; i++) {
         destino[i] = origem[i];
     }
 }
 
 // Função que imprime os 10 primeiros e os 10 últimos elementos de um vetor
-void mostrarVetor(char titulo[], int vetor[]) {
+void mostrarVetor(char titulo[], int *vetor) {
     printf("%s\n", titulo);  
     printf("Primeiros 10: ");
     for (int i = 0; i < 10; i++) printf("%d ", vetor[i]);  // Imprime os 10 primeiros
@@ -29,7 +29,7 @@ void mostrarVetor(char titulo[], int vetor[]) {
 }
 
 // Bubble Sort, ele organiza o vetor de forma crescente ou decrescente dependendo do parâmetro
-void ordenarBolha(int vetor[], int crescente) {
+void ordenarBolha(int *vetor, int crescente) {
     for (int i = 0; i < N - 1; i++) {
         for (int j = 0; j < N - 1 - i; j++) {
             // Se for crescente, compara se o valor atual é maior que o próximo
@@ -46,7 +46,7 @@ void ordenarBolha(int vetor[], int crescente) {
 }
 
 // Insertion Sort, também pode ordenar de forma crescente ou decrescente
-void ordenarInsercao(int v[], int crescente) {
+void ordenarInsercao(int *v, int crescente) {
     for (int i = 1; i < N; i++) {
         int chave = v[i];  // Armazena o valor atual
         int j = i - 1;
@@ -60,8 +60,18 @@ void ordenarInsercao(int v[], int crescente) {
 }
 
 int main() {
-    // Declara o vetor original e 4 cópias para cada tipo de ordenação
-    int original[N], bolhaCres[N], bolhaDec[N], insercaoCres[N], insercaoDec[N];
+    // Declara os vetores usando alocação dinâmica
+    int *original = malloc(N * sizeof(int));
+    int *bolhaCres = malloc(N * sizeof(int));
+    int *bolhaDec = malloc(N * sizeof(int));
+    int *insercaoCres = malloc(N * sizeof(int));
+    int *insercaoDec = malloc(N * sizeof(int));
+
+    // Verifica se a alocação de memória foi bem-sucedida
+    if (!original || !bolhaCres || !bolhaDec || !insercaoCres || !insercaoDec) {
+        printf("Erro ao alocar memória.\n");
+        return 1;
+    }
 
     srand(time(NULL));  // time para gerar números diferentes a cada teste
 
@@ -74,10 +84,10 @@ int main() {
     copiarVetor(insercaoDec, original);
 
     // algoritmos de ordenação
-    ordenarBolha(bolhaCres, 1);     // crescente Bubble Sort
-    ordenarBolha(bolhaDec, 0);      // decrescente Bubble Sort
-    ordenarInsercao(insercaoCres, 1);  // crescente Insertion Sort
-    ordenarInsercao(insercaoDec, 0);   // decrescente Insertion Sort
+    ordenarBolha(bolhaCres, 1);         // crescente Bubble Sort
+    ordenarBolha(bolhaDec, 0);          // decrescente Bubble Sort
+    ordenarInsercao(insercaoCres, 1);   // crescente Insertion Sort
+    ordenarInsercao(insercaoDec, 0);    // decrescente Insertion Sort
 
     // printf dos 10 primeiros e últimos
     mostrarVetor("Original:", original);
@@ -85,6 +95,13 @@ int main() {
     mostrarVetor("Bubble Sort Decrescente:", bolhaDec);
     mostrarVetor("Insertion Sort Crescente:", insercaoCres);
     mostrarVetor("Insertion Sort Decrescente:", insercaoDec);
+
+    // Libera a memória alocada
+    free(original);
+    free(bolhaCres);
+    free(bolhaDec);
+    free(insercaoCres);
+    free(insercaoDec);
 
     return 0;
 }
